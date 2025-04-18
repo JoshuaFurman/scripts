@@ -1,0 +1,26 @@
+#!/usr/bin/env zsh
+
+# sets error messaging for pipes 
+setopt pipefail
+
+# Throws error if fzf is not found
+if ! command -v fzf &>/dev/null; then
+  echo "pf: Error: fzf not found in PATH" >&2
+  exit 1
+fi 
+
+# stores all projects in an array
+projects=( ~/projects/*(/) )
+if (( ${#projects} == 0 )); then
+  echo "pf: no projects found in ~/projects ! FIX IT!" >&2
+  return 1
+fi
+
+selected=$(printf '%s\n' "${projects[@]##*/}" | fzf) || return
+project_path="$HOME/projects/$selected"
+
+if [[ -n TMUX ]]; then
+  tmux new-window -n $selected "cd '$project_path' && exec nvim"
+else
+  cd "$project_path" && exec nvim . # FOR WHATEVER REASON THIS DOESNT WORK BUT I DONT REALLY CARE IT WORKS IN TMUX
+fi
