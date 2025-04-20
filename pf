@@ -16,7 +16,9 @@ if (( ${#projects} == 0 )); then
   return 1
 fi
 
-selected=$(printf '%s\n' "${projects[@]##*/}" | fzf) || return
+selected=$(printf '%s\n' "${projects[@]##*/}" | fzf --tmux center,80%,border-native) || return
+# selected=$(printf '%s\n' "${projects[@]}" | fzf --tmux center,80%,border-native) || return
+
 project_path="$HOME/projects/$selected"
 
 if [[ -n TMUX ]]; then
